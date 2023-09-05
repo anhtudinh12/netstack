@@ -6,8 +6,9 @@ struct netdev *netdev;
 static uint32_t ip_parse(char *addr)
 {
     uint32_t dst = 0;
-    
-    if (inet_pton(AF_INET, addr, &dst) != 1) {
+
+    if (inet_pton(AF_INET, addr, &dst) != 1)
+    {
         perror("ERR: Parsing inet address failed");
         exit(1);
     }
@@ -15,13 +16,7 @@ static uint32_t ip_parse(char *addr)
     return ntohl(dst);
 }
 
-void net_init(void)
-{
-    loop = net_alloc("127.0.0.1", "00:00:00:00:00:00", 1500);
-    netdev = net_alloc("10.0.0.4", "00:0c:29:6d:50:25", 1500);
-}
-
-struct netdev *net_alloc(char *addr, char *hwaddr, uint32_t mtu)
+static struct netdev *netAlloc(char *addr, char *hwaddr, uint32_t mtu)
 {
     struct netdev *dev = malloc(sizeof(struct netdev));
 
@@ -38,4 +33,57 @@ struct netdev *net_alloc(char *addr, char *hwaddr, uint32_t mtu)
     dev->mtu = mtu;
 
     return dev;
+}
+
+void netInit(void)
+{
+    loop = netAlloc("127.0.0.1", "00:00:00:00:00:00", 1500);
+    netdev = netAlloc("10.0.0.4", "00:0c:29:6d:50:25", 1500);
+}
+
+static int netRxFrameHandler(struct recvFrame *frame)
+{
+    struct etherFrame *hdr = (struct etherFrame *)frame->frame;
+    hdr->etherType = ntohs(hdr->etherType);
+
+    switch (hdr->etherType)
+    {
+    case ETHERTYPE_ARP:
+        arpHandler();
+        printf("ETHERTYPE: ARP\n");
+        break;
+    case ETHERTYPE_IPV4:
+        // ipv4Handler();
+        printf("ETHERTYPE: IPV4\n");
+        break;
+    case ETHERTYPE_IPV6:
+        // ipv6Handler();
+        printf("Not supported: IPv6\n");
+        break;
+    default:
+        printf("Unsupported ethertype %x\n", hdr->etherType);
+        recvFrameFree(frame);
+        break;
+    }
+
+    return 0;
+}
+
+void *netRxLoop(void)
+{
+    while (1)
+    {
+        struct recvFrame *frame = recvFrameAlloc(FRAME_LENGTH);
+
+        if (tapRead((char *)frame->frame, FRAME_LENGTH) < 0)
+        {
+            perror("ERR: Read from tun_fd");
+            recvFrameFree(frame);
+            return NULL;
+        }
+
+        netRxFrameHandler(frame);
+    }
+
+    return NULL;
 }

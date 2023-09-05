@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
-void print(void);
+#include "dataFrame.h"
+void arpHandler(struct recvFrame *frame);
 
 #endif /* ARP_H */

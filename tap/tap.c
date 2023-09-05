@@ -26,7 +26,7 @@ static int set_if_up(char *dev)
 /*
  * Taken from Kernel Documentation/networking/tuntap.txt
  */
-static int tap_alloc(char *dev)
+static int tapAlloc(char *dev)
 {
     struct ifreq ifr;
     int fd, err;
@@ -63,20 +63,20 @@ static int tap_alloc(char *dev)
     return fd;
 }
 
-int tap_read(char *buf, int len)
+int tapRead(char *buf, int len)
 {
     return read(tun_fd, buf, len);
 }
 
-int tap_write(char *buf, int len)
+int tapWrite(char *buf, int len)
 {
     return write(tun_fd, buf, len);
 }
 
-void tap_init()
+void tapInit()
 {
     dev = calloc(10, 1);
-    tun_fd = tap_alloc(dev);
+    tun_fd = tapAlloc(dev);
 
     if (set_if_up(dev) != 0)
     {
@@ -94,7 +94,7 @@ void tap_init()
     }
 }
 
-void free_tun()
+void tapFree()
 {
     free(dev);
 }

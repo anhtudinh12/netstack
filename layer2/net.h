@@ -6,6 +6,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdio.h>
+
+#include "dataFrame.h"
+#include "../tap/tap.h"
+#define FRAME_LENGTH 1600
+
 struct netdev
 {
     uint32_t addr;
@@ -14,7 +19,7 @@ struct netdev
     uint32_t mtu;
 };
 
-void net_init(void);
-struct netdev *net_alloc(char *addr, char *hwaddr, uint32_t mtu);
+void netInit(void);
+void* netRxLoop(void);
 
 #endif /* NET_H */

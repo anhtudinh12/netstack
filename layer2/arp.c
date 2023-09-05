@@ -1,6 +1,5 @@
 #include "arp.h"
 
-void print(void)
+void arpHandler(struct recvFrame *frame)
 {
-    printf("Hello World2.\n");
 }
