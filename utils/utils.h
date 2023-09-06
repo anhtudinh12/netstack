@@ -9,7 +9,7 @@
 #define print_err(str, ...) \
     fprintf(stderr, str, ##__VA_ARGS__);
 
-int run_cmd(char *cmd, ...);
+int command(char *cmd, ...);
 uint32_t sum_every_16bits(void *addr, int count);
 uint16_t checksum(void *addr, int count, int start_sum);
 int get_address(char *host, char *port, struct sockaddr *addr);

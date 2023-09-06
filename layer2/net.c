@@ -41,7 +41,7 @@ void netInit(void)
     netdev = netAlloc("10.0.0.4", "00:0c:29:6d:50:25", 1500);
 }
 
-static int netRxFrameHandler(struct recvFrame *frame)
+static int netRxFrameHandler(struct frameDescriptor *frame)
 {
     struct etherFrame *hdr = (struct etherFrame *)frame->frame;
     hdr->etherType = ntohs(hdr->etherType);
@@ -49,7 +49,7 @@ static int netRxFrameHandler(struct recvFrame *frame)
     switch (hdr->etherType)
     {
     case ETHERTYPE_ARP:
-        arpHandler();
+        //arpHandler();
         printf("ETHERTYPE: ARP\n");
         break;
     case ETHERTYPE_IPV4:
@@ -62,7 +62,7 @@ static int netRxFrameHandler(struct recvFrame *frame)
         break;
     default:
         printf("Unsupported ethertype %x\n", hdr->etherType);
-        recvFrameFree(frame);
+        frameDescriptorFree(frame);
         break;
     }
 
@@ -73,12 +73,12 @@ void *netRxLoop(void)
 {
     while (1)
     {
-        struct recvFrame *frame = recvFrameAlloc(FRAME_LENGTH);
+        struct frameDescriptor *frame = frameDescriptorAlloc(FRAME_LENGTH);
 
         if (tapRead((char *)frame->frame, FRAME_LENGTH) < 0)
         {
             perror("ERR: Read from tun_fd");
-            recvFrameFree(frame);
+            frameDescriptorFree(frame);
             return NULL;
         }
 

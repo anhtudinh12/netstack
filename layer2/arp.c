@@ -1,5 +1,5 @@
 #include "arp.h"
 
-void arpHandler(struct recvFrame *frame)
+void arpHandler(struct frameDescriptor *frame)
 {
 }

@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 #include "dataFrame.h"
-void arpHandler(struct recvFrame *frame);
+void arpHandler(struct frameDescriptor *frame);
 
 #endif /* ARP_H */

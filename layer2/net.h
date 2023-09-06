@@ -9,6 +9,8 @@
 
 #include "dataFrame.h"
 #include "../tap/tap.h"
+#include "arp.h"
+
 #define FRAME_LENGTH 1600
 
 struct netdev
@@ -20,6 +22,6 @@ struct netdev
 };
 
 void netInit(void);
-void* netRxLoop(void);
+void *netRxLoop(void);
 
 #endif /* NET_H */

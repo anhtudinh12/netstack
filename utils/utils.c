@@ -1,7 +1,7 @@
 #include "syshead.h"
 #include "utils.h"
 
-int run_cmd(char *cmd, ...)
+int command(char *cmd, ...)
 {
     va_list ap;
     char buf[CMDBUFLEN];

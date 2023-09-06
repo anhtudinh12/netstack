@@ -1,9 +1,9 @@
 #include "dataFrame.h"
 
-struct recvFrame *recvFrameAlloc(uint32_t sizeOfDataFrame)
+struct frameDescriptor *frameDescriptorAlloc(uint32_t sizeOfDataFrame)
 {
-    struct recvFrame *frame = (struct recvFrame *)malloc(sizeof(struct recvFrame));
-    memset(frame, 0, sizeof(struct recvFrame));
+    struct frameDescriptor *frame = (struct frameDescriptor *)malloc(sizeof(struct frameDescriptor));
+    memset(frame, 0, sizeof(struct frameDescriptor));
 
     frame->frame = (uint8_t *)malloc(sizeOfDataFrame);
     memset(frame->frame, 0, sizeOfDataFrame);
@@ -11,7 +11,7 @@ struct recvFrame *recvFrameAlloc(uint32_t sizeOfDataFrame)
     return frame;
 }
 
-void recvFrameFree(struct recvFrame *frame)
+void frameDescriptorFree(struct frameDescriptor *frame)
 {
     free(frame->frame);
     free(frame);

@@ -10,17 +10,17 @@ char *taproute = "10.0.0.0/24";
 
 static int set_if_route(char *dev, char *cidr)
 {
-    return run_cmd("ip route add dev %s %s", dev, cidr);
+    return command("ip route add dev %s %s", dev, cidr);
 }
 
 static int set_if_address(char *dev, char *cidr)
 {
-    return run_cmd("ip address add dev %s local %s", dev, cidr);
+    return command("ip address add dev %s local %s", dev, cidr);
 }
 
 static int set_if_up(char *dev)
 {
-    return run_cmd("ip link set dev %s up", dev);
+    return command("ip link set dev %s up", dev);
 }
 
 /*
