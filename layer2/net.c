@@ -43,13 +43,13 @@ void netInit(void)
 
 static int netRxFrameHandler(struct frameDescriptor *frame)
 {
-    struct etherFrame *hdr = (struct etherFrame *)frame->frame;
-    hdr->etherType = ntohs(hdr->etherType);
+    struct etherHeader *header = (struct etherHeader *)frame->frame;
+    header->etherType = ntohs(header->etherType);
 
-    switch (hdr->etherType)
+    switch (header->etherType)
     {
     case ETHERTYPE_ARP:
-        //arpHandler();
+        arpHandler(frame);
         printf("ETHERTYPE: ARP\n");
         break;
     case ETHERTYPE_IPV4:
@@ -61,7 +61,7 @@ static int netRxFrameHandler(struct frameDescriptor *frame)
         printf("Not supported: IPv6\n");
         break;
     default:
-        printf("Unsupported ethertype %x\n", hdr->etherType);
+        printf("Unsupported ethertype %x\n", header->etherType);
         frameDescriptorFree(frame);
         break;
     }
@@ -69,11 +69,38 @@ static int netRxFrameHandler(struct frameDescriptor *frame)
     return 0;
 }
 
+// int netdev_transmit(struct sk_buff *skb, uint8_t *dst_hw, uint16_t ethertype)
+// {
+//     struct netdev *dev;
+//     struct eth_hdr *hdr;
+
+//     dev = skb->dev;
+
+//     skb_push(skb, ETH_HDR_LEN);
+
+//     hdr = (struct eth_hdr *)skb->data;
+
+//     memcpy(hdr->dmac, dst_hw, dev->addr_len);
+//     memcpy(hdr->smac, dev->hwaddr, dev->addr_len);
+
+//     hdr->ethertype = htons(ethertype);
+//     eth_dbg("out", hdr);
+
+//     return tun_write((char *)skb->data, skb->len);;
+// }
+
+int netTxHandler(struct frameDescriptor *frameDes, uint8_t *desMAC)
+{
+
+    return tapWrite((char *)frameDes->frame, frameDes->frameLength);
+}
 void *netRxLoop(void)
 {
-    while (1)
+    int run = 1;
+    while (run)
     {
         struct frameDescriptor *frame = frameDescriptorAlloc(FRAME_LENGTH);
+        frame->net = netdev;
 
         if (tapRead((char *)frame->frame, FRAME_LENGTH) < 0)
         {
@@ -83,6 +110,7 @@ void *netRxLoop(void)
         }
 
         netRxFrameHandler(frame);
+        frameDescriptorFree(frame);
     }
 
     return NULL;

@@ -23,5 +23,6 @@ struct netdev
 
 void netInit(void);
 void *netRxLoop(void);
+int netTxHandler(struct frameDescriptor *frameDes, uint8_t *desMAC);
 
 #endif /* NET_H */
